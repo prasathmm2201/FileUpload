@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>HTTP Transform Example</title>
+</head>
+<body>
+  <h2>Transform Text via HTTP POST</h2>
+
+  <input type="text" id="textInput" placeholder="Enter text" />
+  <input type="file" id="fileInput" />
+  <button onclick="sendChuckFile()">Send</button>
+
+  <h3>Response:</h3>
+  <pre id="response"></pre>
+
+  <script>
+    async function sendData() {
+      debugger
+      const content = document.getElementById("textInput").value;
+     const fileInput = document.getElementById("fileInput");
+     
+     const formData = new FormData();
+     formData.append("file" , fileInput.files[0]);
+     formData.append("metadata" , JSON.stringify({ name:content }));
+
+      const res = await fetch("http://localhost:4000/update-user", {
+        method: "POST",
+        // headers: { "Content-Type": "application/json" },
+        body: formData
+      });
+
+      const data = await res.json();
+      document.getElementById("response").textContent = JSON.stringify(data, null, 2);
+
+       if (data.path) {
+        const link = document.createElement("a");
+        link.href = data.path;
+        link.download = ""; // browser will use the filename from server
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    }
+
+    async function sendChuckFile() {
+     const fileInput = document.getElementById("fileInput");
+    
+      const chunkSize = 1024; // 1MB chunks
+      let offset = 0;
+      const file = fileInput.files[0]
+
+      while (offset < file.size){
+        const chunk = file.slice(offset , offset + chunkSize)
+        const formData= new FormData()
+        formData.append('chunk' , chunk)
+        formData.append('offset' , offset)
+        formData.append('fileName' , file.name)
+
+      const res = await fetch("http://localhost:4000/upload-chunk", {
+        method: "POST",
+        body: formData
+      });
+
+      offset+=chunkSize
+      }
+
+      const res = await fetch("http://localhost:4000/upload-completed", {
+        method: "POST",
+        body: JSON.stringify({ fileName: file.name }),
+        headers: { "Content-Type": "application/json" },
+      });
+
+            const data = await res.json();
+      document.getElementById("response").textContent = JSON.stringify(data, null, 2);
+
+      alert("Success")
+    }
+  </script>
+</body>
+</html>
