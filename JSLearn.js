@@ -428,3 +428,31 @@ class ErrorBoundry extends Component {
 test("1 + 2 is equal to 3" , ()=>{
     expact(sum(1,2)).toBe(3)
 })
+
+function Human(name , age){
+    this.name = name;
+    this.age = age
+}
+Human.prototype.greet = function(){
+    return `${this.age} ${this.name}`;
+}
+
+
+function Animal(name , age){
+    this.name = name;
+    this.age = age
+}
+
+function Dog(name) {
+    Animal.call(this, name);
+}
+
+Dog.prototype = Object.create(Animal.prototype);
+Dog.prototype.constructor = Dog;
+
+const alice = new Human("alice" , 30);
+const dog = new Animal("dog" , 20);
+
+console.log(alice.greet.call(dog))
+console.log(alice.greet())
+
