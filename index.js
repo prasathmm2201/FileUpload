@@ -128,6 +128,7 @@ app.post('/upload-completed' , (req , res)=>{
 })
 
 app.get('/get-product' , (req , res)=>{
+    res.set("Cache-Control", "public, s-maxage=300, stale-while-revalidate=60");
     res.status(200).json({data:["a","b","c"]})
 })
 
