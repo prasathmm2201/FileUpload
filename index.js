@@ -131,6 +131,6 @@ app.get('/' , (req , res)=>{
     res.status(200).send("Server is running")
 })
 
-app.listen(4000 , ()=>{
+app.listen(8080 , ()=>{
     console.log("Server is running")
 })
