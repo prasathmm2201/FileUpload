@@ -127,6 +127,10 @@ app.post('/upload-completed' , (req , res)=>{
     }
 })
 
+app.get('/get-product' , (req , res)=>{
+    res.status(200).json({data:["a","b","c"]})
+})
+
 app.get('/' , (req , res)=>{
     res.status(200).send("Server is running")
 })
